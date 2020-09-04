@@ -93,18 +93,11 @@
         //
         public bool Remove(T item)
         {
-            if (this.Contains(item))
+            var indexOfItem = this.IndexOf(item);
+
+            if (indexOfItem > -1)
             {
-                for (int i = 0; i < this.Count - 1; i++)
-                {
-                    if (this._items[i].Equals(item))
-                    {
-                        this._items[i] = default;
-                        this.Count--;
-                        return true;
-                    }
-                    this._items[i] = this._items[i + 1];
-                }
+                this.RemoveAt(indexOfItem);
             }
 
             return false;
