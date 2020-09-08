@@ -29,7 +29,7 @@
             get
             {
                 this.ValidateIndex(index);
-                return this._items[index];
+                return this._items[this.Count - 1 - index];
             }
             set
             {
@@ -46,7 +46,6 @@
             this._items[this.Count++] = item;
         }
 
-
         public bool Contains(T item)
         {
             for (int i = 0; i < this.Count; i++)
@@ -60,15 +59,13 @@
             return false;
         }
 
-
-
         public int IndexOf(T item)
         {
-            for (int i = 0; i < this.Count; i++)
+            for (int i = this.Count - 1; i >= 0; i--)
             {
                 if (this._items[i].Equals(item))
                 {
-                    return i;
+                    return this.Count - 1 - i;
                 }
             }
 
@@ -77,15 +74,15 @@
 
         public void Insert(int index, T item)
         {
-            this.ValidateIndex(index);
             this.GrowIfNecessary();
-
-            for (int i = this.Count; i > index; i--)
+            this.ValidateIndex(index);
+            int indexToInsert = this.Count - index;
+            for (int i = this.Count; i > indexToInsert; i--)
             {
                 this._items[i] = this._items[i - 1];
             }
 
-            this._items[index] = item;
+            this._items[indexToInsert] = item;
             this.Count++;
         }
 
@@ -105,7 +102,8 @@
         public void RemoveAt(int index)
         {
             this.ValidateIndex(index);
-            for (int i = index; i < this.Count - 1; i++)
+            int indexOfEl = this.Count - 1 - index;
+            for (int i = indexOfEl; i < this.Count - 1; i++)
             {
                 this._items[i] = this._items[i + 1];
             }
