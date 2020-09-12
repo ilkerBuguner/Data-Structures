@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
 
     public class Tree<T> : IAbstractTree<T>
     {
@@ -44,7 +45,24 @@
 
         public string GetAsString()
         {
-            throw new NotImplementedException();
+            var sb = new StringBuilder();
+            PrintTree(this, sb, 0);
+            return sb.ToString().Trim();
+        }
+
+        private void PrintTree(Tree<T> tree, StringBuilder sb, int indent = 0)
+        {
+            if (tree == null)
+            {
+                return;
+            }
+
+            sb = sb.AppendLine($"{new string(' ', indent)}{tree.Key}");
+
+            foreach (var child in tree.Children)
+            {
+                PrintTree(child, sb, indent + 2);
+            }
         }
 
         public Tree<T> GetDeepestLeftomostNode()
