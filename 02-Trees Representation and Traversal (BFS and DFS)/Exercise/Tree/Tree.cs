@@ -67,7 +67,23 @@
 
         public Tree<T> GetDeepestLeftomostNode()
         {
-            throw new NotImplementedException();
+            Tree<T> res = this;
+
+            Queue<Tree<T>> nodes = new Queue<Tree<T>>();
+            nodes.Enqueue(res);
+
+            while (nodes.Count > 0)
+            {
+                res = nodes.Dequeue();
+                if (res._children.Count == 0)
+                {
+                    return res;
+                }
+
+                nodes.Enqueue(res._children[0]);
+            }
+
+            return res;
         }
 
         public List<T> GetLeafKeys()
