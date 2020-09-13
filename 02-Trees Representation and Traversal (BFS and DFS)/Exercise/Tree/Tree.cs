@@ -163,7 +163,34 @@
 
         public List<List<T>> PathsWithGivenSum(int sum)
         {
-            throw new NotImplementedException();
+            var result = new List<List<T>>();
+            PathsWithGivenSum(this, 0, sum, result);
+            return result;
+        }
+
+        public void PathsWithGivenSum(Tree<T> subtree, int sum, int targetSum, List<List<T>> result)
+        {
+            sum += Convert.ToInt32(subtree.Key);
+
+            if (sum == targetSum)
+            {
+                var path = new Stack<T>();
+                var current = subtree;
+                path.Push(current.Key);
+                while (current.Parent != null)
+                {
+                    current = current.Parent;
+                    path.Push(current.Key);
+                }
+
+                var resultPath = path.ToList();
+                result.Add(resultPath);
+            }
+
+            foreach (var child in subtree.Children)
+            {
+                PathsWithGivenSum(child, sum, targetSum, result);
+            }
         }
 
         public List<Tree<T>> SubTreesWithGivenSum(int sum)
