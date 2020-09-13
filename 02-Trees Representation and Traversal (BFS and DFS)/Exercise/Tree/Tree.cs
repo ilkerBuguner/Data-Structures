@@ -138,7 +138,27 @@
 
         public List<T> GetLongestPath()
         {
-            throw new NotImplementedException();
+            List<T> path = FindLongestPath(this);
+            return path;
+        }
+
+        private List<T> FindLongestPath(Tree<T> tree)
+        {
+            var result = new List<T>();
+            List<T> path;
+
+            foreach (var child in tree.Children)
+            {
+                path = FindLongestPath(child);
+
+                if (path.Count > result.Count)
+                {
+                    result = path;
+                }
+            }
+
+            result.Insert(0, tree.Key);
+            return result;
         }
 
         public List<List<T>> PathsWithGivenSum(int sum)
