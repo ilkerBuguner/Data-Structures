@@ -195,8 +195,26 @@
 
         public List<Tree<T>> SubTreesWithGivenSum(int sum)
         {
-            throw new NotImplementedException();
+            List<Tree<T>> subtrees = new List<Tree<T>>();
+            GetSubTreesWithGivenSum(this, sum, 0, subtrees);
+            return subtrees;
         }
 
+        private int GetSubTreesWithGivenSum(Tree<T> tree, int targetSum, int sum, List<Tree<T>> subtrees)
+        {
+            sum = Convert.ToInt32(tree.Key);
+
+            foreach (var child in tree.Children)
+            {
+                sum += GetSubTreesWithGivenSum(child, targetSum, sum, subtrees);
+            }
+
+            if (sum == targetSum)
+            {
+                subtrees.Add(tree);
+            }
+
+            return sum;
+        }
     }
 }
