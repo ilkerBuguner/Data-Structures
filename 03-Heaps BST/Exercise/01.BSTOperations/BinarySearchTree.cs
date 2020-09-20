@@ -1,6 +1,7 @@
-﻿namespace _04.BinarySearchTree
+﻿namespace _01.BSTOperations
 {
     using System;
+    using System.Collections.Generic;
 
     public class BinarySearchTree<T> : IAbstractBinarySearchTree<T>
         where T : IComparable<T>
@@ -22,6 +23,8 @@
 
         public T Value => this.Root.Value;
 
+        public int Count => this.ElementsCount();
+
         public bool Contains(T element)
         {
             if (this.Root == null)
@@ -42,7 +45,7 @@
                     {
                         current = current.RightChild;
                     }
-                    else if(this.AreEqual(element, current.Value))
+                    else
                     {
                         return true;
                     }
@@ -62,44 +65,10 @@
             }
             else
             {
-                var current = this.Root;
-                Node<T> previous = null;
-
-                while (current != null)
-                {
-                    previous = current;
-                    if (this.IsLess(element, current.Value))
-                    {
-                        current = current.LeftChild;
-                    }
-                    else if (this.IsGreater(element, current.Value))
-                    {
-                        current = current.RightChild;
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
-                if (this.IsLess(element, previous.Value))
-                {
-                    previous.LeftChild = toInsert;
-                    if (this.LeftChild == null)
-                    {
-                        this.LeftChild = toInsert;
-                    }
-                }
-                else
-                {
-                    previous.RightChild = toInsert;
-                    if (this.RightChild == null)
-                    {
-                        this.RightChild = toInsert;
-                    }
-                }
+                this.InsertRecursive(this.Root, element);
             }
         }
+
 
         public IAbstractBinarySearchTree<T> Search(T element)
         {
@@ -120,14 +89,29 @@
             return new BinarySearchTree<T>(current);
         }
 
-        private void Copy(Node<T> root)
+        public void EachInOrder(Action<T> action)
         {
-            if (root != null)
-            {
-                this.Insert(root.Value);
-                this.Copy(root.LeftChild);
-                this.Copy(root.RightChild);
-            }
+            throw new NotImplementedException();
+        }
+
+        public List<T> Range(T lower, T upper)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteMin()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteMax()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetRank(T element)
+        {
+            throw new NotImplementedException();
         }
 
         private bool IsLess(T element, T value)
@@ -143,6 +127,72 @@
         private bool AreEqual(T element, T value)
         {
             return element.CompareTo(value) == 0;
+        }
+
+        private Node<T> InsertRecursive(Node<T> current, T element)
+        {
+            var toInsert = new Node<T>(element, null, null);
+            if (current == null)
+            {
+                return toInsert;
+            }
+
+            if (this.IsLess(element, current.Value))
+            {
+                current.LeftChild = this.InsertRecursive(current.LeftChild, element);
+                if (this.LeftChild == null)
+                {
+                    this.LeftChild = toInsert;
+                }
+            }
+            else if (this.IsGreater(element, current.Value))
+            {
+                current.RightChild = this.InsertRecursive(current.RightChild, element);
+                if (this.RightChild == null)
+                {
+                    this.RightChild = toInsert;
+                }
+            }
+
+            return current;
+        }
+
+        private void Copy(Node<T> root)
+        {
+            if (root != null)
+            {
+                this.Insert(root.Value);
+                this.Copy(root.LeftChild);
+                this.Copy(root.RightChild);
+            }
+        }
+
+        private int ElementsCount()
+        {
+            if (this.Root == null)
+            {
+                return 0;
+            }
+
+            var count = 0;
+
+            this.CountOrderDfs(this.Root, ref count);
+
+            return count;
+        }
+
+        private void CountOrderDfs(Node<T> subtree, ref int count)
+        {
+            var current = subtree;
+
+            if (current == null)
+            {
+                return;
+            }
+
+            count++;
+            CountOrderDfs(current.LeftChild, ref count);
+            CountOrderDfs(current.RightChild, ref count);
         }
     }
 }
