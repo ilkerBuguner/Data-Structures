@@ -21,6 +21,11 @@
 
             this.HeapifyUp();
         }
+        public T Peek()
+        {
+            this.EnsureNotEmpty();
+            return this._elements[0];
+        }
 
         private void HeapifyUp()
         {
@@ -55,12 +60,6 @@
         private bool IndexIsValid(int index)
         {
             return index > 0;
-        }
-
-        public T Peek()
-        {
-            this.EnsureNotEmpty();
-            return this._elements[0];
         }
 
         private void EnsureNotEmpty()
