@@ -43,7 +43,7 @@
         {
             int currentIndex = this.Size - 1;
             int parentIndex = this.GetParentIndex(currentIndex);
-            while (this.IndexIsValid(currentIndex) && this.IsLess(currentIndex, parentIndex))
+            while (currentIndex > 0 && this.IsLess(currentIndex, parentIndex))
             {
                 this.Swap(currentIndex, parentIndex);
                 currentIndex = parentIndex;
@@ -56,11 +56,11 @@
         {
             int index = 0;
             int leftChildIndex = this.GetLeftChildIndex(0);
-            while (this.IndexIsValid(leftChildIndex) && this.IsLess(index, leftChildIndex))
+            while (leftChildIndex < this.Size && this.IsGreater(index, leftChildIndex))
             {
                 int toSwapWith = leftChildIndex;
                 int rightChildindex = this.GetRightChildIndex(index);
-                if (this.IndexIsValid(rightChildindex) && this.IsLess(toSwapWith, rightChildindex))
+                if (rightChildindex < this.Size && this.IsGreater(toSwapWith, rightChildindex))
                 {
                     toSwapWith = rightChildindex;
                 }
