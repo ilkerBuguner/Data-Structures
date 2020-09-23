@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Security.Cryptography.X509Certificates;
+    using System.Transactions;
 
     public class BinarySearchTree<T> : IAbstractBinarySearchTree<T>
         where T : IComparable<T>
@@ -23,7 +25,7 @@
 
         public T Value => this.Root.Value;
 
-        public int Count => this.ElementsCount();
+        public int Count { get; private set; }
 
         public bool Contains(T element)
         {
@@ -67,6 +69,8 @@
             {
                 this.InsertRecursive(this.Root, element);
             }
+
+            this.Count++;
         }
 
 
@@ -96,7 +100,15 @@
 
         public List<T> Range(T lower, T upper)
         {
-            throw new NotImplementedException();
+            if (this.Root == null)
+            {
+                return null;
+            }
+
+            var result = new List<T>();
+            var currentSubtree = this.Root;
+            this.RangeDfs(lower, upper, result, currentSubtree);
+            return result;
         }
 
         public void DeleteMin()
@@ -111,7 +123,32 @@
 
         public int GetRank(T element)
         {
-            throw new NotImplementedException();
+            var count = GetRankRecursive(this.Root, element);
+            return count;
+        }
+
+        public int GetRankRecursive(Node<T> current, T element)
+        {
+            if (current == null)
+            {
+                return 0;
+            }
+
+            var count = 0;
+
+            if (this.IsGreater(element, current.Value))
+            {
+                count++;
+                count += GetRankRecursive(current.LeftChild, element);
+                count += GetRankRecursive(current.RightChild, element);
+            }
+
+            //if (this.IsLess(element, current.Value))
+            //{
+            //    count += GetRankRecursive(current.RightChild, element);
+            //}
+
+            return count;
         }
 
         private bool IsLess(T element, T value)
@@ -122,6 +159,16 @@
         private bool IsGreater(T element, T value)
         {
             return element.CompareTo(value) > 0;
+        }
+
+        private bool IsLessOrEqual(T element, T value)
+        {
+            return element.CompareTo(value) <= 0;
+        }
+
+        private bool IsGreaterOrEqual(T element, T value)
+        {
+            return element.CompareTo(value) >= 0;
         }
 
         private bool AreEqual(T element, T value)
@@ -167,32 +214,55 @@
             }
         }
 
-        private int ElementsCount()
+        private void RangeDfs(T lower, T upper, List<T> result, Node<T> currentSubtree)
         {
-            if (this.Root == null)
-            {
-                return 0;
-            }
-
-            var count = 0;
-
-            this.CountOrderDfs(this.Root, ref count);
-
-            return count;
-        }
-
-        private void CountOrderDfs(Node<T> subtree, ref int count)
-        {
-            var current = subtree;
-
-            if (current == null)
+            if (currentSubtree == null)
             {
                 return;
             }
 
-            count++;
-            CountOrderDfs(current.LeftChild, ref count);
-            CountOrderDfs(current.RightChild, ref count);
+            if (this.IsLessOrEqual(lower, currentSubtree.Value) && this.IsGreaterOrEqual(upper, currentSubtree.Value))
+            {
+                result.Add(currentSubtree.Value);
+            }
+
+            if (currentSubtree.LeftChild != null)
+            {
+                RangeDfs(lower, upper, result, currentSubtree.LeftChild);
+            }
+
+            if (currentSubtree.RightChild != null)
+            {
+                RangeDfs(lower, upper, result, currentSubtree.RightChild);
+            }
         }
+
+        //private int ElementsCount()
+        //{
+        //    if (this.Root == null)
+        //    {
+        //        return 0;
+        //    }
+
+        //    var count = 0;
+
+        //    this.CountOrderDfs(this.Root, ref count);
+
+        //    return count;
+        //}
+
+        //private void CountOrderDfs(Node<T> subtree, ref int count)
+        //{
+        //    var current = subtree;
+
+        //    if (current == null)
+        //    {
+        //        return;
+        //    }
+
+        //    count++;
+        //    CountOrderDfs(current.LeftChild, ref count);
+        //    CountOrderDfs(current.RightChild, ref count);
+        //}
     }
 }
