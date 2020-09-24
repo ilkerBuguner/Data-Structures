@@ -16,7 +16,7 @@ namespace _01.Loader.PerformanceTests
             {
                 buffer.Add(new Invoice(i, i + 10));
             }
-
+            ;
             sw.Start();
             for (int i = 0; i < 10000 - 10; i++)
             {

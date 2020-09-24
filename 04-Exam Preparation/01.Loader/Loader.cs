@@ -5,79 +5,145 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class Loader : IBuffer
     {
-        public int EntitiesCount => throw new NotImplementedException();
+        private List<IEntity> entities;
+
+        public Loader()
+        {
+            this.entities = new List<IEntity>();
+        }
+
+        public int EntitiesCount => this.entities.Count;
 
         public void Add(IEntity entity)
         {
-            throw new NotImplementedException();
+            this.entities.Add(entity);
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            this.entities.Clear();
         }
 
         public bool Contains(IEntity entity)
         {
-            throw new NotImplementedException();
+            return this.entities.Contains(entity);
         }
 
         public IEntity Extract(int id)
         {
-            throw new NotImplementedException();
+            var element = this.entities.Find(e => e.Id == id);
+            if (this.IsEmpty() || element == null)
+            {
+                return null;
+            }
+
+            entities.Remove(element);
+            return element;
         }
 
         public IEntity Find(IEntity entity)
         {
-            throw new NotImplementedException();
+            var element = this.entities.Find(x => x == entity);
+            if (this.IsEmpty() || element == null)
+            {
+                return null;
+            }
+
+            return element;
         }
 
         public List<IEntity> GetAll()
         {
-            throw new NotImplementedException();
+            return this.entities;
         }
 
         public IEnumerator<IEntity> GetEnumerator()
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < this.EntitiesCount; i++)
+            {
+                yield return this.entities[i];
+            }
         }
 
         public void RemoveSold()
         {
-            throw new NotImplementedException();
+            this.entities = this.entities.Where(e => e.Status != BaseEntityStatus.Sold).ToList();
         }
 
         public void Replace(IEntity oldEntity, IEntity newEntity)
         {
-            throw new NotImplementedException();
+            var indexOfElement = this.entities.IndexOf(oldEntity);
+            if (this.IsEmpty() || indexOfElement == -1)
+            {
+                throw new InvalidOperationException("Entity not found");
+            }
+
+            this.entities[indexOfElement] = newEntity;
         }
 
         public List<IEntity> RetainAllFromTo(BaseEntityStatus lowerBound, BaseEntityStatus upperBound)
         {
-            throw new NotImplementedException();
+            var result = new List<IEntity>();
+
+            foreach (var entity in this.entities)
+            {
+                if (entity.Status >= lowerBound && entity.Status <= upperBound)
+                {
+                    result.Add(entity);
+                }
+            }
+
+            return result;
         }
 
         public void Swap(IEntity first, IEntity second)
         {
-            throw new NotImplementedException();
+            var firstElementIndex = this.entities.IndexOf(first);
+            var secondElementIndex = this.entities.IndexOf(second);
+
+            if (this.IsEmpty() || firstElementIndex == -1 || secondElementIndex == -1)
+            {
+                throw new InvalidOperationException("Entity not found");
+            }
+
+            var temp = this.entities[firstElementIndex];
+            this.entities[firstElementIndex] = this.entities[secondElementIndex];
+            this.entities[secondElementIndex] = temp;
         }
 
         public IEntity[] ToArray()
         {
-            throw new NotImplementedException();
+            if (this.IsEmpty())
+            {
+                return new IEntity[0];
+            }
+
+            return this.entities.ToArray();
         }
 
         public void UpdateAll(BaseEntityStatus oldStatus, BaseEntityStatus newStatus)
         {
-            throw new NotImplementedException();
+            this.entities.ForEach(entity =>
+            {
+                if (entity.Status == oldStatus)
+                {
+                    entity.Status = newStatus;
+                }
+            });
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return this.GetEnumerator();
+        }
+
+        private bool IsEmpty()
+        {
+            return this.entities.Count <= 0;
         }
     }
 }
