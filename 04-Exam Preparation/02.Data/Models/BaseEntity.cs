@@ -51,5 +51,17 @@ namespace _02.Data.Models
 
             return other.Id - Id;
         }
+
+        public override bool Equals(object obj)
+        {
+            IEntity other = (IEntity)obj;
+
+            return other.Id == this.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

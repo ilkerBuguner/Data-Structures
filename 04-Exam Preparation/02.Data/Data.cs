@@ -1,51 +1,119 @@
 ﻿namespace _02.Data
 {
     using _02.Data.Interfaces;
+    using _02.Data.Models;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using Wintellect.PowerCollections;
 
     public class Data : IRepository
     {
-        public int Size => throw new NotImplementedException();
+        private OrderedBag<IEntity> _entities;
+
+        public Data()
+        {
+            this._entities = new OrderedBag<IEntity>();
+        }
+
+        public Data(Data copy)
+        {
+            this._entities = copy._entities;
+        }
+
+        public int Size => this._entities.Count;
 
         public void Add(IEntity entity)
         {
-            throw new NotImplementedException();
+            this._entities.Add(entity);
+
+            var parentNode = this.GetById((int)entity.ParentId);
+
+            if (parentNode != null)
+            {
+                parentNode.Children.Add(entity);
+            }
         }
 
         public IRepository Copy()
         {
-            throw new NotImplementedException();
+            Data copy = (Data)this.MemberwiseClone();
+
+            return new Data(copy);
+
         }
 
         public IEntity DequeueMostRecent()
         {
-            throw new NotImplementedException();
+            if (this.Size <= 0)
+            {
+                throw new InvalidOperationException("Operation on empty Data");
+            }
+
+            return this._entities.RemoveFirst();
         }
 
         public List<IEntity> GetAll()
         {
-            throw new NotImplementedException();
+            if (this.Size <= 0)
+            {
+                return new List<IEntity>();
+            }
+
+            return new List<IEntity>(this._entities);
         }
 
         public List<IEntity> GetAllByType(string type)
         {
-            throw new NotImplementedException();
+            if (type != typeof(Invoice).Name &&
+                type != typeof(StoreClient).Name &&
+                type != typeof(User).Name)
+            {
+                throw new InvalidOperationException($"Invalid type: {type}");
+            }
+
+            var result = new List<IEntity>();
+
+            foreach (var entity in this._entities)
+            {
+                if (entity.GetType().Name == type)
+                {
+                    result.Add(entity);
+                }
+            }
+
+            return result;
         }
 
         public IEntity GetById(int id)
         {
-            throw new NotImplementedException();
+            if (id < 0 || id >= this.Size)
+            {
+                return null;
+            }
+
+            return this._entities[this.Size - 1 - id];
         }
 
         public List<IEntity> GetByParentId(int parentId)
         {
-            throw new NotImplementedException();
+            var parentNode = this.GetById(parentId);
+
+            if (parentNode == null)
+            {
+                return new List<IEntity>();
+            }
+
+            return parentNode.Children;
         }
 
         public IEntity PeekMostRecent()
         {
-            throw new NotImplementedException();
+            if (this.Size <= 0)
+            {
+                throw new InvalidOperationException("Operation on empty Data");
+            }
+            return this._entities.GetFirst();
         }
     }
 }
